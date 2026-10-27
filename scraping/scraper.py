@@ -6,6 +6,18 @@ from playwright.sync_api import sync_playwright
 import config
 
 
+def clean_mediawiki_navigation(article):
+    """Remove known MediaWiki/Wikisource navigation and interface elements."""
+    article.locator(
+        ".ws-footer, "
+        ".wst-header-back, "
+        ".wst-header-forward, "
+        ".mw-editsection, "
+        ".printfooter, "
+        ".catlinks"
+    ).evaluate_all("(nodes) => nodes.forEach(node => node.remove())")
+
+
 def fetch_content_and_screenshot(url, output_image_path, timeout_ms=60_000):
     """Open `url` in headless Chromium, save a full-page screenshot, return the text.
 
@@ -21,7 +33,9 @@ def fetch_content_and_screenshot(url, output_image_path, timeout_ms=60_000):
             page.screenshot(path=str(output_image_path), full_page=True)
             article = page.locator("#mw-content-text")
             if article.count():
-                text = article.first.inner_text()
+                article = article.first
+                clean_mediawiki_navigation(article)
+                text = article.inner_text()
             else:
                 text = page.inner_text("body")
         finally:

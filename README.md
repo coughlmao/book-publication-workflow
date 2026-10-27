@@ -175,7 +175,7 @@ These files are generated on each run and are git-ignored, so running the pipeli
 ### Known limitations
 
 - **Long chapters.** The whole chapter is sent to Gemini in one request per step. Gemini's output limit is about 65,000 tokens, so a very long chapter fails with a clear error instead of being silently cut off.
-- **Scraper is tuned for Wikisource.** It reads the `#mw-content-text` element. Wikisource's chapter header (title and previous/next links) is still included in the text. On other sites it falls back to all text on the page, which can include menus and footers.
+- **Scraper is tuned for Wikisource.** It reads the `#mw-content-text` element and removes known MediaWiki navigation and interface elements before extracting chapter text. Some navigation clutter may remain on pages with different or unusual HTML structures. On other sites it falls back to all text on the page, which can include menus and footers.
 - **Feedback is applied by the model.** Nothing checks that Gemini followed your suggestion, and each round re-sends the whole chapter.
 - **One chapter per run.** There is no batch mode for a whole book.
 
